@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS vehicle_demo.short_rental_orders
     employee_name Nullable(String)
 )
 ENGINE = MergeTree
-ORDER BY (business_month, organization_id, supplier_name, order_id);
+ORDER BY (ifNull(business_month, ''), organization_id, supplier_name, ifNull(order_id, ''));
 
 INSERT INTO vehicle_demo.short_rental_orders VALUES
 ('SR-0501', '2026年05月', 'demo-hq',   '演示供应商 A', 'DEMO-A01', '演示员工 1'),
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS vehicle_demo.long_rental_monthly
     supplier_name String
 )
 ENGINE = MergeTree
-ORDER BY (business_month, organization_id, supplier_name, vehicle_id);
+ORDER BY (business_month, organization_id, supplier_name, ifNull(vehicle_id, ''));
 
 INSERT INTO vehicle_demo.long_rental_monthly VALUES
 ('LR-001', '2026-05', 'demo-hq',   '演示供应商 A'),
