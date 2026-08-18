@@ -1,0 +1,14 @@
+.git
+.github
+.env
+.env.*
+.venv
+**/*.egg-info
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+**/node_modules
+**/dist
+runtime
+test-results
+playwright-report

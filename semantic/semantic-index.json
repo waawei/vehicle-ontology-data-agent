@@ -1,0 +1,149 @@
+{
+  "schemaVersion": "semantic-index.v1",
+  "workspaceId": "vehicle-demo",
+  "resourceVersion": "demo-1.0.0",
+  "entityTypes": [
+    {
+      "entityTypeId": "vehicle.entity.short_rental_order",
+      "name": { "zhCn": "临租订单", "enUs": "Short rental order" },
+      "approvalStatus": "published",
+      "stereotypes": ["business_record"],
+      "fields": [
+        { "fieldId": "short_rental.order_id", "valueType": "string" },
+        { "fieldId": "vehicle.dimension.supplier", "valueType": "string" },
+        { "fieldId": "vehicle.dimension.organization", "valueType": "string" },
+        { "fieldId": "vehicle.time.business_month", "valueType": "string" }
+      ]
+    },
+    {
+      "entityTypeId": "vehicle.entity.long_rental_vehicle",
+      "name": { "zhCn": "长租车辆", "enUs": "Long rental vehicle" },
+      "approvalStatus": "published",
+      "stereotypes": ["business_record"],
+      "fields": [
+        { "fieldId": "long_rental.vehicle_id", "valueType": "string" }
+      ]
+    },
+    {
+      "entityTypeId": "vehicle.entity.supplier",
+      "name": { "zhCn": "供应商", "enUs": "Supplier" },
+      "approvalStatus": "published",
+      "stereotypes": ["master_data"]
+    },
+    {
+      "entityTypeId": "vehicle.entity.organization",
+      "name": { "zhCn": "组织", "enUs": "Organization" },
+      "approvalStatus": "published",
+      "stereotypes": ["authorization_scope"]
+    }
+  ],
+  "eventTypes": [
+    {
+      "eventSetId": "vehicle.event.short_rental_orders",
+      "name": { "zhCn": "临租订单记录", "enUs": "Short rental orders" },
+      "grain": "one row per order snapshot",
+      "approvalStatus": "published",
+      "publicationStatus": "published_executable"
+    },
+    {
+      "eventSetId": "vehicle.event.long_rental_monthly",
+      "name": { "zhCn": "长租车辆月记录", "enUs": "Long rental monthly vehicles" },
+      "grain": "one row per vehicle per business month",
+      "approvalStatus": "published",
+      "publicationStatus": "published_executable"
+    }
+  ],
+  "metricDefinitions": [
+    {
+      "metricId": "vehicle.count.short_rental_order",
+      "canonicalNameZh": "临租订单数",
+      "aliases": [{ "text": "短租订单数" }],
+      "approvalStatus": "published",
+      "publicationStatus": "published_executable",
+      "executable": true,
+      "aggregator": "count_distinct",
+      "sourceEventSetIds": ["vehicle.event.short_rental_orders"],
+      "evidenceRequirements": { "mountIds": ["vehicle.mount.short_rental_orders_demo"] },
+      "grain": { "entityTypeId": "vehicle.entity.short_rental_order", "description": "去重临租订单" },
+      "dimensions": [
+        { "fieldId": "vehicle.dimension.supplier", "dimensionId": "supplier", "entityTypeId": "vehicle.entity.supplier" },
+        { "fieldId": "vehicle.dimension.organization", "dimensionId": "organization", "entityTypeId": "vehicle.entity.organization" },
+        { "fieldId": "vehicle.dimension.vehicle", "dimensionId": "vehicle" },
+        { "fieldId": "vehicle.dimension.employee", "dimensionId": "employee" }
+      ],
+      "fieldMappings": [
+        { "logicalFieldId": "short_rental.order_id", "role": "identity_key", "sourceColumn": "order_id", "sourceType": "Nullable(String)" },
+        { "logicalFieldId": "vehicle.dimension.organization", "role": "organization_key", "sourceColumn": "organization_id", "sourceType": "String" },
+        { "logicalFieldId": "vehicle.time.business_month", "role": "business_time", "sourceColumn": "business_month", "sourceType": "Nullable(String)" },
+        { "logicalFieldId": "vehicle.dimension.supplier", "role": "dimension", "sourceColumn": "supplier_name", "sourceType": "String" },
+        { "logicalFieldId": "vehicle.dimension.vehicle", "role": "dimension", "sourceColumn": "vehicle_plate", "sourceType": "Nullable(String)" },
+        { "logicalFieldId": "vehicle.dimension.employee", "role": "dimension", "sourceColumn": "employee_name", "sourceType": "Nullable(String)" }
+      ],
+      "timeSemantics": {
+        "businessTimeFieldId": "vehicle.time.business_month",
+        "businessTimeRole": "order_business_month",
+        "timezone": "Asia/Shanghai",
+        "allowedWindow": "month"
+      }
+    },
+    {
+      "metricId": "vehicle.count.long_rental_vehicle",
+      "canonicalNameZh": "长租车辆数",
+      "approvalStatus": "published",
+      "publicationStatus": "published_executable",
+      "executable": true,
+      "aggregator": "count_distinct",
+      "sourceEventSetIds": ["vehicle.event.long_rental_monthly"],
+      "evidenceRequirements": { "mountIds": ["vehicle.mount.long_rental_monthly_demo"] },
+      "grain": { "entityTypeId": "vehicle.entity.long_rental_vehicle", "description": "去重长租车辆" },
+      "dimensions": [
+        { "fieldId": "vehicle.dimension.supplier", "dimensionId": "supplier", "entityTypeId": "vehicle.entity.supplier" },
+        { "fieldId": "vehicle.dimension.organization", "dimensionId": "organization", "entityTypeId": "vehicle.entity.organization" }
+      ],
+      "fieldMappings": [
+        { "logicalFieldId": "long_rental.vehicle_id", "role": "identity_key", "sourceColumn": "vehicle_id", "sourceType": "Nullable(String)" },
+        { "logicalFieldId": "vehicle.dimension.organization", "role": "organization_key", "sourceColumn": "organization_id", "sourceType": "String" },
+        { "logicalFieldId": "vehicle.time.business_month", "role": "business_time", "sourceColumn": "business_month", "sourceType": "String" },
+        { "logicalFieldId": "vehicle.dimension.supplier", "role": "dimension", "sourceColumn": "supplier_name", "sourceType": "String" }
+      ],
+      "timeSemantics": {
+        "businessTimeFieldId": "vehicle.time.business_month",
+        "businessTimeRole": "vehicle_business_month",
+        "timezone": "Asia/Shanghai",
+        "allowedWindow": "month"
+      }
+    }
+  ],
+  "relationTypes": [
+    {
+      "relationId": "vehicle.relation.order_supplier",
+      "sourceEntityTypeId": "vehicle.entity.short_rental_order",
+      "targetEntityTypeId": "vehicle.entity.supplier",
+      "relationType": "served_by",
+      "direction": "outbound",
+      "physicalizationMode": "schema_only",
+      "approvalStatus": "published"
+    },
+    {
+      "relationId": "vehicle.relation.order_organization",
+      "sourceEntityTypeId": "vehicle.entity.short_rental_order",
+      "targetEntityTypeId": "vehicle.entity.organization",
+      "relationType": "attributed_to",
+      "direction": "outbound",
+      "physicalizationMode": "schema_only",
+      "approvalStatus": "published"
+    }
+  ],
+  "timeSemantics": [
+    {
+      "timeRoleId": "vehicle.time.business_month",
+      "role": "业务月份",
+      "description": "业务系统归属月份，不等同于事件时间戳。",
+      "availability": "published",
+      "mappings": [
+        { "eventSetId": "vehicle.event.short_rental_orders" },
+        { "eventSetId": "vehicle.event.long_rental_monthly" }
+      ]
+    }
+  ]
+}

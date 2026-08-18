@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "schema-topology.v1",
+  "workspaceId": "vehicle-demo",
+  "resourceVersion": "demo-1.0.0",
+  "mounts": [
+    {
+      "mountId": "vehicle.mount.short_rental_orders_demo",
+      "eventSetId": "vehicle.event.short_rental_orders",
+      "sourceKind": "clickhouse",
+      "accessMode": "read_only",
+      "approvalStatus": "published",
+      "database": "vehicle_demo",
+      "table": "short_rental_orders",
+      "fieldAllowlist": [
+        "order_id",
+        "business_month",
+        "organization_id",
+        "supplier_name",
+        "vehicle_plate",
+        "employee_name"
+      ],
+      "organizationField": {
+        "logicalFieldId": "vehicle.dimension.organization",
+        "sourceColumn": "organization_id"
+      },
+      "businessTimeField": {
+        "logicalFieldId": "vehicle.time.business_month",
+        "sourceColumn": "business_month"
+      }
+    },
+    {
+      "mountId": "vehicle.mount.long_rental_monthly_demo",
+      "eventSetId": "vehicle.event.long_rental_monthly",
+      "sourceKind": "clickhouse",
+      "accessMode": "read_only",
+      "approvalStatus": "published",
+      "database": "vehicle_demo",
+      "table": "long_rental_monthly",
+      "fieldAllowlist": [
+        "vehicle_id",
+        "business_month",
+        "organization_id",
+        "supplier_name"
+      ],
+      "organizationField": {
+        "logicalFieldId": "vehicle.dimension.organization",
+        "sourceColumn": "organization_id"
+      },
+      "businessTimeField": {
+        "logicalFieldId": "vehicle.time.business_month",
+        "sourceColumn": "business_month"
+      }
+    }
+  ]
+}

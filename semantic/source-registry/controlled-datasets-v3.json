@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "controlled-datasets.v3",
+  "datasets": [
+    {
+      "datasetId": "short_rental_orders_demo",
+      "status": "approved",
+      "sourceObject": "vehicle_demo.short_rental_orders",
+      "factBindings": {
+        "short_rental.order_id": "order_id"
+      },
+      "timeAxes": {
+        "business_month": {
+          "sourceField": "business_month",
+          "kind": "month_zh",
+          "completeness": 1.0
+        }
+      },
+      "organizationAttribution": {
+        "status": "measured",
+        "coverage": 1.0,
+        "numerator": 25,
+        "denominator": 25,
+        "basis": "metric_identity",
+        "timeRange": {
+          "kind": "business_month",
+          "start": "2026-05",
+          "end": "2026-06"
+        },
+        "topologyVersion": "demo-topology-v1"
+      }
+    },
+    {
+      "datasetId": "long_rental_monthly_demo",
+      "status": "approved",
+      "sourceObject": "vehicle_demo.long_rental_monthly",
+      "factBindings": {
+        "long_rental.vehicle_id": "vehicle_id"
+      },
+      "timeAxes": {
+        "business_month": {
+          "sourceField": "business_month",
+          "kind": "month",
+          "completeness": 1.0
+        }
+      }
+    }
+  ]
+}

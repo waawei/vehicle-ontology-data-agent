@@ -1,0 +1,76 @@
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.3
+    environment:
+      CLICKHOUSE_DB: vehicle_demo
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ""
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    volumes:
+      - ./infra/clickhouse/init:/docker-entrypoint-initdb.d:ro
+      - clickhouse-data:/var/lib/clickhouse
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- 'http://127.0.0.1:8123/ping' | grep -q Ok"]
+      interval: 3s
+      timeout: 2s
+      retries: 30
+
+  data-api:
+    build:
+      context: .
+      dockerfile: services/data_api/Dockerfile
+    environment:
+      CLICKHOUSE_URL: http://clickhouse:8123
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ""
+      DEMO_AUTO_LOGIN: "true"
+      SESSION_SECRET: ${SESSION_SECRET:-local-demo-session-secret-change-me}
+    ports:
+      - "127.0.0.1:8090:8090"
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/health/live')\""]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+
+  pi-runtime:
+    build:
+      context: .
+      dockerfile: services/pi_agent_runtime/Dockerfile
+    environment:
+      PI_AGENT_HOST: 0.0.0.0
+      PI_AGENT_PORT: "8091"
+      PI_AGENT_BASE_URL: ${PI_AGENT_BASE_URL:-https://provider.example.test/v1}
+      PI_AGENT_API_KEY: ${PI_AGENT_API_KEY:-}
+      PI_AGENT_MODEL_ID: ${PI_AGENT_MODEL_ID:-gpt-5.6-terra}
+      PI_AGENT_MODEL_NAME: ${PI_AGENT_MODEL_NAME:-GPT-5.6 Terra}
+      PI_AGENT_THINKING_LEVEL: ${PI_AGENT_THINKING_LEVEL:-high}
+      PI_AGENT_TOOL_API_URL: http://data-api:8090
+      PI_AGENT_SEMANTIC_INDEX_PATH: /app/semantic/semantic-index.json
+      PI_AGENT_DATA_DIR: /data
+      PI_AGENT_CLICKHOUSE_STATUS: online
+      PI_AGENT_CORS_ORIGINS: http://127.0.0.1:5180,http://localhost:5180
+    volumes:
+      - pi-agent-data:/data
+    ports:
+      - "127.0.0.1:8091:8091"
+    depends_on:
+      data-api:
+        condition: service_healthy
+
+  workbench:
+    build:
+      context: .
+      dockerfile: apps/workbench/Dockerfile
+    ports:
+      - "5180:80"
+    depends_on:
+      - data-api
+      - pi-runtime
+
+volumes:
+  clickhouse-data:
+  pi-agent-data:

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "metric-definitions.v3",
+  "metrics": [
+    {
+      "metricId": "vehicle.count.short_rental_order",
+      "displayName": "临租订单数",
+      "datasetId": "short_rental_orders_demo",
+      "measureFactId": "short_rental.order_id",
+      "aggregation": "count_distinct",
+      "unit": "count",
+      "subject": "short_rental_order",
+      "grain": "distinct order",
+      "timeAxis": "business_month",
+      "approval": { "status": "approved" }
+    },
+    {
+      "metricId": "vehicle.count.long_rental_vehicle",
+      "displayName": "长租车辆数",
+      "datasetId": "long_rental_monthly_demo",
+      "measureFactId": "long_rental.vehicle_id",
+      "aggregation": "count_distinct",
+      "unit": "count",
+      "subject": "vehicle",
+      "grain": "distinct vehicle",
+      "timeAxis": "business_month",
+      "approval": { "status": "approved" }
+    }
+  ]
+}

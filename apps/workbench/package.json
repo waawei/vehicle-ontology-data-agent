@@ -1,0 +1,57 @@
+{
+  "name": "@ontofleet/workbench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1 --port 5180",
+    "dev:e2e": "vite --host 127.0.0.1 --port 5197",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 5180",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src e2e playwright.config.ts vite.config.mjs",
+    "test": "vitest run --passWithNoTests",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "5.2.8",
+    "@fontsource-variable/jetbrains-mono": "5.2.8",
+    "@radix-ui/react-tooltip": "1.2.16",
+    "@tanstack/react-query": "5.90.21",
+    "lucide-react": "1.25.0",
+    "next-themes": "0.4.6",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-markdown": "10.1.0",
+    "react-router-dom": "7.18.2",
+    "remark-gfm": "4.0.1",
+    "sonner": "2.0.8"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@eslint/js": "9.39.1",
+    "@playwright/test": "1.62.1",
+    "@tailwindcss/vite": "4.2.0",
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.0",
+    "@testing-library/user-event": "14.6.1",
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "@typescript-eslint/parser": "8.46.4",
+    "@vitejs/plugin-react": "5.0.4",
+    "eslint": "9.39.1",
+    "eslint-plugin-react-hooks": "7.0.1",
+    "eslint-plugin-react-refresh": "0.4.24",
+    "globals": "16.5.0",
+    "jsdom": "27.1.0",
+    "tailwindcss": "4.2.0",
+    "typescript": "5.9.3",
+    "vite": "6.4.3",
+    "vitest": "3.2.7"
+  },
+  "overrides": {
+    "postcss": "8.5.26"
+  }
+}
