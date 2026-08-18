@@ -95,7 +95,10 @@ jobs:
           cache: pip
       - run: pip install -e "services/data_api[dev]"
       - name: Load synthetic ClickHouse fixtures
-        run: curl --fail --silent --show-error "http://127.0.0.1:8123/?multiquery=1" --data-binary @infra/clickhouse/init/001_demo.sql
+        run: |
+          container_id="$(docker ps --filter 'ancestor=clickhouse/clickhouse-server:25.3' --format '{{.ID}}' | head -n 1)"
+          test -n "$container_id"
+          docker exec -i "$container_id" clickhouse-client --multiquery < infra/clickhouse/init/001_demo.sql
       - name: Verify governed aggregate pushdown
         env:
           CLICKHOUSE_INTEGRATION_URL: http://127.0.0.1:8123
